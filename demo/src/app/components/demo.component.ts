@@ -11,8 +11,14 @@ import { UMeditorComponent } from 'ngx-umeditor';
 export class DemoComponent {
     @ViewChild('full') full: UMeditorComponent;
     full_source: string;
+    status: string = '初始中';
 
     constructor(private el: ElementRef) {}
+
+    onReady(comp: UMeditorComponent) {
+        this.status = '初始化完成';
+        console.log(comp);
+    }
 
     setLanguage(lang: 'zh-cn' | 'en') {
         this.full.setLanguage(lang);

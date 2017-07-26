@@ -1,0 +1,11 @@
+<div class="card mb-3">
+    <div class="card-header">另一个完整示例（Status: {{status}}）</div>
+    <div class="card-block">
+        <umeditor [(ngModel)]="full_source" [config]="{initialFrameHeight:100}" (onReady)="onReady($event)" #full></umeditor>
+        <div class="card card-outline-secondary mt-3">
+            <div class="card-block">
+                <blockquote class="card-blockquote" [innerHTML]="full_source"></blockquote>
+            </div>
+        </div>
+    </div>
+</div>

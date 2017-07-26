@@ -1,8 +1,8 @@
 <div class="card mb-3">
-    <div class="card-header">完整示例</div>
+    <div class="card-header">完整示例（Status: {{status}}）</div>
     <div class="card-block">
         <textarea highlight-js>&lt;umeditor [(ngModel)]="full_source" #full></umeditor></textarea>
-        <umeditor [(ngModel)]="full_source" #full></umeditor>
+        <umeditor [(ngModel)]="full_source" [config]="{initialFrameHeight:100}" (onReady)="onReady($event)" #full></umeditor>
         <div class="card card-outline-secondary mt-3">
             <div class="card-block">
                 <blockquote class="card-blockquote" [innerHTML]="full_source"></blockquote>

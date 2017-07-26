@@ -26,7 +26,7 @@ export class UMeditorComponent implements OnDestroy, ControlValueAccessor {
     private value: string;
     private id: string;
     private events:any = {};
-    
+
     loading: boolean = true;
 
     @Input() path: string;
@@ -34,12 +34,12 @@ export class UMeditorComponent implements OnDestroy, ControlValueAccessor {
     @Input() loadingTip: string = '加载中...';
     @ViewChild('host') host: ElementRef;
 
-    @Output() onReady = new EventEmitter();
-    @Output() onDestroy = new EventEmitter();
-    @Output() onContentChange = new EventEmitter();
+    @Output() onReady = new EventEmitter<UMeditorComponent>();
+    @Output() onDestroy = new EventEmitter<UMeditorComponent>();
+    @Output() onContentChange = new EventEmitter<string>();
 
     constructor(private el: ElementRef,
-                private zone: NgZone, 
+                private zone: NgZone,
                 private ss: ScriptService) { }
 
     ngOnInit() {
@@ -61,26 +61,33 @@ export class UMeditorComponent implements OnDestroy, ControlValueAccessor {
     }
 
     private init(options?: any) {
-        this.loading = false;
         if (!window.UM)
             throw new Error('uedito js文件加载失败');
 
         if (this.instance) return;
 
-        window.UMEDITOR_CONFIG.UMEDITOR_HOME_URL = this.path;
-        let umeditor = UM.getEditor(this.id, Object.assign({
-            UMEDITOR_HOME_URL: this.path
-        }, this.config, options));
-        
-        umeditor.addListener('ready', () => {
-            this.instance = umeditor;
+        this.loading = false;
+
+        this.zone.runOutsideAngular(() => {
+            window.UMEDITOR_CONFIG.UMEDITOR_HOME_URL = this.path;
+            let umeditor = UM.getEditor(this.id, Object.assign({
+                UMEDITOR_HOME_URL: this.path
+            }, this.config, options));
+
+            umeditor.addListener('contentChange', () => {
+                this.updateValue(umeditor.getContent());
+            });
+
+            this.zone.run(() => {
+                this.instance = umeditor;
+            });
+        });
+
+        // ready 只会在UM首次加载时触发，倒置 [(ngModel)] 失效
+        setTimeout(() => {
             this.value && this.instance.setContent(this.value);
-            this.onReady.emit();
-        });
-        
-        umeditor.addListener('contentChange', () => {
-            this.updateValue(umeditor.getContent());
-        });
+            this.onReady.emit(this);
+        }, 300);
     }
 
     private updateValue(value: string){
@@ -89,27 +96,28 @@ export class UMeditorComponent implements OnDestroy, ControlValueAccessor {
 
             this.onChange(this.value);
             this.onTouched(this.value);
-            
+
             this.onContentChange.emit(this.value);
         });
     }
 
-    private destroy() {
+    private _destroy() {
+        // fixed: 由于组件ngOnDestroy会先清除DOM，倒置instance为空，因此从内存中获取实例
+        this.instance = UM.getEditor(this.id);
         if (this.instance) {
             for (let ki of this.events) {
                 this.instance.removeListener(ki, this.events[ki]);
             }
-            this.instance.removeListener('ready');
             this.instance.removeListener('contentChange');
             this.instance.destroy();
             this.instance = null;
         }
-        this.onDestroy.emit();
+        this.onDestroy.emit(this);
     }
 
     /**
      * 获取UE实例
-     * 
+     *
      * @readonly
      */
     get Instance(): any {
@@ -118,12 +126,12 @@ export class UMeditorComponent implements OnDestroy, ControlValueAccessor {
 
     /**
      * 设置编辑器语言
-     * 
-     * @param {('zh-cn' | 'en')} lang 
+     *
+     * @param {('zh-cn' | 'en')} lang
      */
     setLanguage(lang: 'zh-cn' | 'en') {
         this.ss.loadScript(`${this.path}/lang/${lang}/${lang}.js`).then(res => {
-            this.destroy();
+            this._destroy();
 
             //清空语言
             if (!UM._bak_I18N) {
@@ -155,12 +163,12 @@ export class UMeditorComponent implements OnDestroy, ControlValueAccessor {
     }
 
     ngOnDestroy() {
-        this.destroy();
+        this._destroy();
     }
 
     writeValue(value: string): void {
         this.value = value;
-        if(this.instance){
+        if(this.value && this.instance){
             this.instance.setContent(this.value);
         }
     }
