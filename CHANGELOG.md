@@ -1,3 +1,7 @@
+# 1.0.3
+
++ fix: 当根模块指定 `ViewEncapsulation.None` 时，倒置编辑器无法显示问题。
+
 # 1.0.2
 
 + [增] `onReady`、`onDestroy` 事件返回一个参数值 `UMeditorComponent` 实例对象。

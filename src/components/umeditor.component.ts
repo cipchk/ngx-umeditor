@@ -1,4 +1,4 @@
-import { Component, Input, forwardRef, ViewChild, ElementRef, OnDestroy, EventEmitter, Output, NgZone } from '@angular/core';
+import { Component, Input, forwardRef, ViewChild, ElementRef, OnDestroy, EventEmitter, Output, NgZone, ViewEncapsulation } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
 import { ScriptService } from './script.service';
@@ -14,6 +14,7 @@ export type EventTypes = 'destroy' | 'reset' | 'focus' | 'langReady' | 'beforeEx
     <textarea #host class="umeditor-textarea"></textarea>
     <p class="umeditor-loading" *ngIf="loading">{{loadingTip}}</p>
     `,
+    encapsulation: ViewEncapsulation.Emulated,
     styles: [ `.umeditor-textarea{display:none;width:100%;}` ],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
