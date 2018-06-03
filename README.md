@@ -45,8 +45,7 @@ export class AppModule { }
          [path]="'./assets/umeditor/'"
          [loadingTip]="'加载中……'"
          (onReady)=""
-         (onDestroy)=""
-         (onContentChange)=""></umeditor>
+         (onDestroy)=""></umeditor>
 ```
 
 | 名称    | 类型           | 默认值  | 描述 |
@@ -56,7 +55,6 @@ export class AppModule { }
 | loadingTip | string | 加载中... | 初始化提示文本。 |
 | onReady | Function |  | 编辑器准备就绪后会触发该事件 |
 | onDestroy | Function |  | **编辑器组件销毁**后会触发该事件 |
-| onContentChange | Function |  | 编辑器内容发生改变时会触发该事件 |
 
 ### 3、关于懒加载
 

@@ -5,7 +5,7 @@
   "module": "./esm5/umeditor.js",
   "es2015": "./esm2015/umeditor.js",
   "typings": "./umeditor.d.ts",
-  "description": "Angular for Baidu UMeditor",
+  "description": "Angular for Baidu UMeditor.",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/cipchk/ngx-umeditor.git"
