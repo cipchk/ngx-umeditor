@@ -6,34 +6,30 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { HighlightJsModule } from 'ngx-highlight-js';
 
-import { UMeditorModule } from '../../lib';
+import { UMeditorModule } from 'ngx-umeditor';
 
 import { AppComponent } from './app.component';
 import { DemoComponent } from './components/demo.component';
 import { DevComponent } from './components/dev.component';
 
 @NgModule({
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpModule,
-    RouterModule.forRoot([
-        { path: '', component: DemoComponent },
-        { path: 'dev', component: DevComponent }
-    ], { useHash: true }),
-    CommonModule,
-    HighlightJsModule,
+    imports: [
+        BrowserModule,
+        FormsModule,
+        HttpModule,
+        RouterModule.forRoot(
+            [
+                { path: '', component: DemoComponent },
+                { path: 'dev', component: DevComponent },
+            ],
+            { useHash: true },
+        ),
+        CommonModule,
+        HighlightJsModule,
 
-    UMeditorModule.forRoot()
-  ],
-  declarations: [
-    AppComponent,
-    DemoComponent,
-    DevComponent
-  ],
-  providers: [  ],
-  bootstrap: [AppComponent]
+        UMeditorModule.forRoot(),
+    ],
+    declarations: [AppComponent, DemoComponent, DevComponent],
+    bootstrap: [AppComponent],
 })
-
-export class AppDemoModule {
-}
+export class AppModule {}

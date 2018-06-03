@@ -27,7 +27,7 @@ describe('Component: ngx-umeditor', () => {
 
 @Component({
   selector: 'app-umeditor-test',
-  template: ''
+  template: '<umeditor></umeditor>'
 })
 class TestNGComponent {
 }

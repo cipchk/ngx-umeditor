@@ -8,8 +8,12 @@ import {
     EventEmitter,
     Output,
     NgZone,
-    ViewEncapsulation,
-    OnInit
+    OnInit,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef,
+    AfterViewInit,
+    SimpleChanges,
+    OnChanges
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor } from '@angular/forms';
 
@@ -40,67 +44,82 @@ export type EventTypes =
     // tslint:disable-next-line:component-selector
     selector: 'umeditor',
     template: `
-    <textarea #host class="umeditor-textarea"></textarea>
+    <textarea id="{{id}}" class="umeditor-textarea"></textarea>
     <p class="umeditor-loading" *ngIf="loading">{{loadingTip}}</p>
     `,
-    encapsulation: ViewEncapsulation.Emulated,
-    styles: [`.umeditor-textarea{display:none;width:100%;}`],
+    preserveWhitespaces: false,
+    styles: [
+      `:host {line-height: initial;} :host .umeditor-textarea{display:none;width:100%;}`,
+    ],
     providers: [
         {
             provide: NG_VALUE_ACCESSOR,
             useExisting: forwardRef(() => UMeditorComponent),
             multi: true
         }
-    ]
+    ],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UMeditorComponent implements OnInit, OnDestroy, ControlValueAccessor {
-    static idPool = 0;
-
+export class UMeditorComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy, ControlValueAccessor {
     private instance: any;
     private value: string;
-    private id: string;
+    private inited = false;
     private events: any = {};
 
-    protected onChange: any = Function.prototype;
-    protected onTouched: any = Function.prototype;
+    private onChange: (value: string) => void;
+    private onTouched: () => void;
 
     loading = true;
+    id = `_umeditor-${Math.random()
+      .toString(36)
+      .substring(2)}`;
 
     @Input() path: string;
     @Input() config: any;
     @Input() loadingTip = '加载中...';
-    @ViewChild('host') host: ElementRef;
+
+    /** 延迟初始化 */
+    @Input() delay = 50;
 
     @Output() onReady = new EventEmitter<UMeditorComponent>();
     @Output() onDestroy = new EventEmitter<UMeditorComponent>();
-    @Output() onContentChange = new EventEmitter<string>();
 
     constructor(
         private el: ElementRef,
         private zone: NgZone,
         private ss: ScriptService,
+        private cd: ChangeDetectorRef,
         cog: UMeditorConfig
     ) {
         Object.assign(this, { ...new UMeditorConfig(), cog });
     }
 
     ngOnInit() {
-        // 构建一个虚拟id
-        this.id = 'umeditor-' + ++UMeditorComponent.idPool;
-        this.host.nativeElement.id = this.id;
+      this.inited = true;
+    }
 
+    ngAfterViewInit(): void {
         // 已经存在对象无须进入懒加载模式
         if (window.UM) {
-            this.init();
+            this.initDelay();
             return;
         }
 
         this.ss
             .load(this.path, true)
             .getChangeEmitter()
-            .subscribe(res => {
-                this.init();
-            });
+            .subscribe(res => this.initDelay());
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+      if (this.inited && changes.config) {
+        this.destroy();
+        this.initDelay();
+      }
+    }
+
+    private initDelay() {
+      setTimeout(() => this.init(), this.delay);
     }
 
     private init(options?: any) {
@@ -111,8 +130,6 @@ export class UMeditorComponent implements OnInit, OnDestroy, ControlValueAccesso
         if (this.instance) {
             return;
         }
-
-        this.loading = false;
 
         this.zone.runOutsideAngular(() => {
             window.UMEDITOR_CONFIG.UMEDITOR_HOME_URL = this.path;
@@ -126,33 +143,22 @@ export class UMeditorComponent implements OnInit, OnDestroy, ControlValueAccesso
                     options
                 )
             );
+            umeditor.ready(() => {
+                this.instance = umeditor;
+                if (this.value) this.instance.setContent(this.value);
+                this.zone.run(() => this.onReady.emit(this));
+            });
 
             umeditor.addListener('contentChange', () => {
-                this.updateValue(umeditor.getContent());
-            });
-
-            this.zone.run(() => {
-                this.instance = umeditor;
-                if (this.value) {
-                    this.instance.setContent(this.value);
-                }
-                this.onReady.emit(this);
+                this.value = umeditor.getContent();
+                this.zone.run(() => this.onChange(this.value));
             });
         });
+        this.loading = false;
+        this.cd.detectChanges();
     }
 
-    private updateValue(value: string) {
-        this.zone.run(() => {
-            this.value = value;
-
-            this.onChange(this.value);
-            this.onTouched(this.value);
-
-            this.onContentChange.emit(this.value);
-        });
-    }
-
-    private _destroy() {
+    private destroy() {
         // fixed: 由于组件ngOnDestroy会先清除DOM，倒置instance为空，因此从内存中获取实例
         this.instance = UM.getEditor(this.id);
         if (this.instance) {
@@ -168,8 +174,6 @@ export class UMeditorComponent implements OnInit, OnDestroy, ControlValueAccesso
 
     /**
      * 获取UE实例
-     *
-     * @readonly
      */
     get Instance(): any {
         return this.instance;
@@ -177,12 +181,10 @@ export class UMeditorComponent implements OnInit, OnDestroy, ControlValueAccesso
 
     /**
      * 设置编辑器语言
-     *
-     * @param {('zh-cn' | 'en')} lang
      */
     setLanguage(lang: 'zh-cn' | 'en') {
         this.ss.loadScript(`${this.path}/lang/${lang}/${lang}.js`).then(res => {
-            this._destroy();
+            this.destroy();
 
             // 清空语言
             if (!UM._bak_I18N) {
@@ -191,7 +193,7 @@ export class UMeditorComponent implements OnInit, OnDestroy, ControlValueAccesso
             UM.I18N = {};
             UM.I18N[lang] = UM._bak_I18N[lang];
 
-            this.init();
+            this.initDelay();
         });
     }
 
@@ -218,7 +220,13 @@ export class UMeditorComponent implements OnInit, OnDestroy, ControlValueAccesso
     }
 
     ngOnDestroy() {
-        this._destroy();
+        this.destroy();
+    }
+
+    // reuse-tab: http://ng-alain.com/components/reuse-tab#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F
+    _onReuseInit() {
+      this.destroy();
+      this.initDelay();
     }
 
     writeValue(value: string): void {

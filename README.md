@@ -1,5 +1,5 @@
 # ngx-umeditor
-Angular2.x for Baidu UMeditor（[UEditor](https://github.com/cipchk/ngx-ueditor)）
+Angular for Baidu UMeditor（[UEditor](https://github.com/cipchk/ngx-ueditor)）
 
 [![NPM version](https://img.shields.io/npm/v/ngx-umeditor.svg)](https://www.npmjs.com/package/ngx-umeditor)
 [![Build Status](https://travis-ci.org/cipchk/ngx-umeditor.svg?branch=master)](https://travis-ci.org/cipchk/ngx-umeditor)
@@ -30,7 +30,7 @@ npm install ngx-umeditor --save
 import { UMeditorModule } from 'ngx-umeditor';
 
 @NgModule({
-    imports: [BrowserModule, UMeditorModule ],
+    imports: [BrowserModule, UMeditorModule.forRoot() ],
     declarations: [AppComponent],
     bootstrap: [AppComponent]
 })

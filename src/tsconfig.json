@@ -1,21 +1,15 @@
 {
+  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "declaration": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "lib": ["es6", "dom"],
-    "types": [
-      "jasmine",
-      "webpack"
-    ],
-    "mapRoot": "./",
-    "module": "es6",
-    "moduleResolution": "node",
-    "outDir": "../temp/out-tsc",
-    "sourceMap": true,
-    "target": "es5",
-    "typeRoots": [
-      "../node_modules/@types"
-    ]
-  }
+    "sourceMap": false,
+    "outDir": "../out-tsc/app",
+    "baseUrl": "./",
+    "module": "es2015",
+    "types": [],
+    "paths": {
+      "ngx-umeditor": ["../lib/index"],
+      "ngx-umeditor/*": ["../lib/*"]
+    }
+  },
+  "exclude": ["test.ts", "**/*.spec.ts"]
 }

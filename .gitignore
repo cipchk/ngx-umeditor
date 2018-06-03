@@ -11,9 +11,13 @@ yarn.lock
 .lib
 
 # ignore build and dist for now
-/demo/dist
 /dist
-/coverage
+/tmp
+/out-tsc
+/__gen_lib
+/publish-es5
+/publish-es2015
+/publish
 
 # ignore inline compiling
 /logs

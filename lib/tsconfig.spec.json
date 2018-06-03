@@ -15,10 +15,7 @@
         "lib": ["es2016", "dom"]
     },
     "include": [
-        "../scripts/typings.d.ts",
-        "../scripts/test.ts",
-        "**/*.ts",
-        "**/*.d.ts"
+        "**/*.spec.ts"
     ],
     "exclude": ["../src", "../node_modules"]
 }
