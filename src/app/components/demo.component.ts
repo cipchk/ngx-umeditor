@@ -1,6 +1,7 @@
 /* tslint:disable */
 import { Component, OnInit, ViewEncapsulation, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { UMeditorComponent } from 'ngx-umeditor';
+import { UMeditorComponent } from '../../../lib';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
     selector: 'demo',
@@ -13,7 +14,7 @@ export class DemoComponent {
     full_source: string;
     status: string = '初始中';
 
-    constructor(private el: ElementRef) {}
+    constructor(private el: ElementRef, public sanitizer:DomSanitizer) {}
 
     onReady(comp: UMeditorComponent) {
         this.status = '初始化完成';

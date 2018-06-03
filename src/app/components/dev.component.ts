@@ -1,6 +1,6 @@
 /* tslint:disable */
 import { Component, OnInit, ViewEncapsulation, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
-import { UMeditorComponent } from 'ngx-umeditor';
+import { UMeditorComponent } from '../../../lib';
 
 declare const UE: any;
 

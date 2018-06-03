@@ -6,7 +6,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { HighlightJsModule } from 'ngx-highlight-js';
 
-import { UMeditorModule } from 'ngx-umeditor';
+import { UMeditorModule } from '../../lib';
 
 import { AppComponent } from './app.component';
 import { DemoComponent } from './components/demo.component';
@@ -24,7 +24,7 @@ import { DevComponent } from './components/dev.component';
     CommonModule,
     HighlightJsModule,
 
-    UMeditorModule
+    UMeditorModule.forRoot()
   ],
   declarations: [
     AppComponent,

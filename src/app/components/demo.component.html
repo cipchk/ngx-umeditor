@@ -5,7 +5,7 @@
         <umeditor [(ngModel)]="full_source" [config]="{initialFrameHeight:100}" (onReady)="onReady($event)" #full></umeditor>
         <div class="card card-outline-secondary mt-3">
             <div class="card-body">
-                <blockquote class="card-bodyquote" [innerHTML]="full_source"></blockquote>
+                <blockquote class="card-bodyquote" [innerHTML]="sanitizer.bypassSecurityTrustHtml(full_source)"></blockquote>
             </div>
         </div>
         <h5 style="border-bottom:1px solid #eee;" class="mt-3 mb-3 pb-3">语言切换</h5>
