@@ -19,19 +19,20 @@ export class ScriptService {
 
         this.loaded = true;
 
+        if (!path.endsWith('/')) path += '/';
         // 优先加载依赖库
         this.loadLib(path).then(() => {
             const promises: Promise<any>[] = [];
 
             promises.push(
-                this.loadCss(`${path}/themes/default/css/umeditor.min.css`)
+                this.loadCss(`${path}themes/default/css/umeditor.min.css`)
             );
 
             [
                 `${path}umeditor.config.js`,
                 debug === true
-                    ? `${path}/umeditor.js`
-                    : `${path}/umeditor.all.min.js`
+                    ? `${path}umeditor.js`
+                    : `${path}umeditor.all.min.js`
             ].forEach(script => promises.push(this.loadScript(script)));
 
             Promise.all(promises).then(res => {
