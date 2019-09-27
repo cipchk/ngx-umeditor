@@ -161,7 +161,7 @@ export class UMeditorComponent implements OnInit, AfterViewInit, OnChanges, OnDe
     private destroy() {
         // fixed: 由于组件ngOnDestroy会先清除DOM，倒置instance为空，因此从内存中获取实例
         this.instance = UM.getEditor(this.id);
-        if (this.instance) {
+        if (this.instance && this.events && this.events.length > 0) {
             for (const ki of this.events) {
                 this.instance.removeListener(ki, this.events[ki]);
             }
