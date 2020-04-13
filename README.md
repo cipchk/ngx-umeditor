@@ -3,6 +3,7 @@ Angular for Baidu UMeditor（[UEditor](https://github.com/cipchk/ngx-ueditor)）
 
 [![NPM version](https://img.shields.io/npm/v/ngx-umeditor.svg)](https://www.npmjs.com/package/ngx-umeditor)
 [![Build Status](https://travis-ci.org/cipchk/ngx-umeditor.svg?branch=master)](https://travis-ci.org/cipchk/ngx-umeditor)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcipchk%2Fngx-umeditor.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcipchk%2Fngx-umeditor?ref=badge_shield)
 
 
 ## Demo
@@ -148,3 +149,6 @@ Thanks for understanding!
 ### License
 
 The MIT License (see the [LICENSE](https://github.com/cipchk/ngx-umeditor/blob/master/LICENSE) file for the full text)
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fcipchk%2Fngx-umeditor.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fcipchk%2Fngx-umeditor?ref=badge_large)
