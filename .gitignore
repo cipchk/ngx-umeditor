@@ -18,6 +18,7 @@ yarn.lock
 /publish-es5
 /publish-es2015
 /publish
+/coverage
 
 # ignore inline compiling
 /logs
